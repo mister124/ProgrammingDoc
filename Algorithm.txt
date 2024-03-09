@@ -1,0 +1,80 @@
+# etc.
+- key points: Big-O, space complexity, 적절한 data structure
+- 알고리즘: 유한한 연산을 통해 입력에 따른 출력 도출
+
+# 알고리즘 성능 측정
+- HW, SW의 환경으로부터 독립적이고 객관적인 측정을 위해 virtual machine(가상 컴퓨터): RAM(Random Access Machine)=CPU
++Memory+pseudo language: 기본 연산(단위시간에 수행되는 연산: 대입, 산술, 비교, 논리, 비트로 읽기, 쓰기, 반복문은 새지 않
+음) ,조건문, 반복문, 함수 등이 표현되면 됨
+- Time complexity: 어떤 input의 size n에 따른 실행 시간, T(n)
+- Big-O 표기법: worst case input에 따른 T(n)의 최고차항(증가률)을 통한 표기법, O(최고차항, ex: n^2,n^0=1, etc.)
+
+# 최대공약수 구하기
+- 두 수 중 하나가 0이 될 때까지 큰 수를 작은 수로 나눈 나머지 구하기
+
+# 올바른 괄호 사용 판단
+- if '(': stack에 push, if ')': len(stack)==0이면 False, 아니면 pop-> 문자열 끝: len(stack)==0이면 True, 아니면 False
+
+# infix->postfix->calculation 
+- infix->postfix
+outstack=list, opstack=stack -> if 피연산자: outstack.append(피연산자) -> '('의 우선 순위는 가장 낮게 취급하고 opstack.push(
+'('), ')'일 때 '('가 나올 때까지 outstack.append(opstack.pop()), 나머지 경우 opstack에 있는 자신 이상의 우선 순위를 가지는 연산
+자가 있다면 pop 후 opstack.push(연산자) -> 수식 끝: len(opstack)==0일 때까지 outstack.append(opstack.pop())
+- postfix->calculation 
+if 피연산자: opstack.push(피연산자), else: b=opstack.pop(), a=opstack.pop(), opstack.push(a연산자b)-> 수식 끝: opstack.pop()
+
+# Josephus problem 
+- n명의 군인들이 둘러앉고, 1명이 남을 때 까지 순서대로 k번 째 사람이 죽을 때 최종적으로 살아남은 군인의 순서 구하기
+- k-1번 dequeue 후 enqueue 후 그냥 dequeue
+
+# running technique 
+
+# DFS(Depth First Search)
+특정 순서로 방문하지 않았던 vertex 방문(방문할 vertex가 없다면 전으로)
+DFS tree 존재, back edge: 방문하지 않은 edge, cycle 존재, pre-post 구간 포함 관계: DFS tree
+
+# BFS(Breadth First Search
+특정 순서로 방문하지 않았던 vertex 방문 후 전으로(방문할 vertex가 없다면 다음 층 vertex로)
+
+# Shortest Path Algorithm
+single source node-> all other nodes
+dist[v] = s-v 최단 경로 길이, relax(u, v): if dist[v] > dis[u] + w(u, v): dist[v] = dis[u] + w(u, v) 
+- Bellman Ford Algorithm
+O(n^3), weight가 음수일 때도 가능, s와 모든 node 사이의 최단 경로를 알 수 있음
+source vertex, 초기 distance 설정-> n-1번 모든 edge에 대해 relax
+- Dijkstra Algorithm
+greedy, DP Algorithm
+O(n^2 logn), Fibonacci heap 사용 시: O(n^2)
+source vertex, 초기 distance 설정-> dist[u]가 가장 낮은 vertex에서 가보지 않은 edge를 따라가 vertex를 relax
+
+# All-to-All Shortest Path Problem
+- 구현법
+1. for each node s in V: Dijkstra(s)
+2. DP(dynamic programing): Floyd-Warshall Algorithm
+- DP(dynamic programing)
+분할 분석+ memoization
+- Floyd-Warshall Algorithm
+O(n^3), 최단경로 분할 분석: d.k(i, j) = min(d.k-1(i, k) + d.k-1(k, j), d.k-1(i, j))
+d: nxn 2차원 리스트 초기값 inf-> 처음 d[i][j] = w(i, j) else inf, d[i][i] = 0-> for k = 1 to n: for i, j in V: d[i][j] calculate
+
+# Tim sorting
+sort 기본 구현 방법, time: O(nlog n), stable, not in-place
+- 구현
+run의 크기(32, 64: 정렬된 부분이 32 초과일 때)까지 오름차순, 내림차순으로 insertion sort하여 분할, O(n^2log n)
+-> 오름차순으로 통일, stack에서 run(시작, 끝 inedx) merge sort(A<B, A+B<C를 만족하지 않는 경우 B를 더 작은 run과 merge)
+-> 최종적으로 A, B 순서대로 계속 merge
+- insertion sort
+왼쪽 수에서 이진탐색하여 자리 변경 
+- merge sort
+상수개로 분할-> sorted A(n/2)와 sorted B(n/2)를 비교하여 C(n)에 저장-> A+B에 덮어쓰기
+Tim: sorted A+ sorted B-> A(작은 memory)를 C에 copy, min(C)와 min(B) 비교-> A+B에 덮어쓰기
+최적화
+1. 이진탐색 통해 max(A)보다 큰 B부분, min(B)보다 작은 A부분 제외하고 merge 
+2. Galloping mode(3번씩 비교되면 후에 2의 배수로 띄어 비교) 통해 max(A)보다 큰 B부분, min(B)보다 작은 A부분 제외하고 
+merge 
+
+# 순열 복원
+A: missed permutation, S: 자신 왼쪽의 작은 수의 개수 list, L: 자신 오른쪽의 큰 수의 개수 list, done: 0-1 출현 list, S만으로 복원
+1. for i in range(n): A[i] = S[i] + (n-1-i) - L[i]
+2. for i in reversed(range(n)): A[i] = S[i] + done[S[i]]까지 1이 나온 횟수(끝까지 S[i] update됨)
+3. 이진탐색: O(nlog^2 n), B.I.T 활용 

@@ -1,0 +1,199 @@
+# etc.
+- etc.
+key points: order, unique, search, modification
+자료구조: 자료를 담는 구조
+
+# variable
+- 특징
+python에선 객체를 가르킴
+
+# array(c, java)
+- 특징
+sequential
+읽기, 쓰기 연산 제공, 시작 주소+index*n bytes: O(1), 연속적인 메모리 할당
+용량 고정   
+
+# list(python)
+- 특징
+sequential
+index로 접근
+용량 자동 조절, dynamic array
+iterable, [element for item in seq (if condition)]
+- method
+append(x): 맨 뒤에 x 삽입
+pop([index]): 맨 뒤의 객체 return, remove, 해당되는 index가 없다면 IndexError   
+insert(index, x): index에 x 삽입, 기존 객체들의 index+1 
+remove(x): 처음 등장한 x 제거
+index(x[, start[, end]]): 처음 등장한 x의 index return, 해당되는 x가 없다면 ValueError
+count(x): x의 개수 return
+sort([reverse=True]): 객체를 오름차순으로 정렬, return None
+
+# queue(FIFO), deque(양쪽에서 In, Out)
+- 특징
+sequential
+from collections import deque
+- method
+append(x): 맨 뒤에 x 삽입
+pop(): 맨 뒤의 값 return, remove
+appendleft(x): 맨 앞에 x insert
+popleft(): 맨 앞의 값 return, remove 
+
+# linked list
+- 특징
+sequential
+index로 접근 불가능, 연속적인 메모리 할당 x, search: O(n) 
+- node
+key와 link(다음 node, 마지막엔 None)로 구성, head(first node), tail(last node)
+- singlylinkedlist
+head 연산: O(1), tail 연산: O(1), search: O(n)
+- generator
+파이썬의 for문에서 L 객체가 속한 class의 __iterator__ 호출
+-> yield로 x를 받으면 for문 실행
+-> __iterator__이 끝나면 자동으로 return StopIterator(Error message), for문 끝
+- (circularly) doublylinkedlist
+head.prev = tail, tail.next = head
+insert, delete 연산이 편해짐, tail 연산: O(1)
+초기 dummy(head) node로 시작, key=None, prev=self, next=self
+
+# hash table
+- 특징
+매우 빠른 평균 insert, delete, search 가능
+- hash function
+key->index로 자료(key, values)를 table(list)의 slot(2^n)에 비순차적으로 분배, 이때 less collision, fast computation 고려
+perfect(ideal) hash function: 충돌이 없는 hash function, 불가능에 가까움
+c-universal hash function: Pr(f(x)==f(y))=c(상수)/m, 일반적으로 사용
+key(int):
+division hash function: f(k)=k%p(소수)%m(size), f(k)=k%m, etc.
+multiplication, folding, mid-squares, extraction
+key(string): additive, rotating, universal
+- collision resolution method
+자료를 저장할 공간에 이미 다른 자료가 저장될 경우 필요
+open addressing: 주위 공간 조사, cluster 1씩 증가
+liner probing: 다음 index 조사, cluster 1씩 증가
+quadratic probing: k+(1,2,3...)^2 index 조사, cluster 길이 느리게 증가
+double hashing: hash function 2개 사용, f(key)+(0,1,2,...)*g(key), cluster 길이 느리게 증가
+chaining: 각 slot에서 singly(doubly)linkedlist의 pushFront 사용
+- cluster
+자료들이 연속된 slot에 모여있는 것, 되도록 적어야 됨
+hash function, collision resoluton method, load factor(H에 저장된 item 갯수/전체 slot 갯수)의 영향 받음
+- 성능
+c-universal hash function, 평균적인 input에서 m>=2n(최소 50% 이상 빈 slot)으로 관리
+-> cluster 평균 증가 사이즈: O(1)
+-> set, remove, search: 평균 O(1)
+- 연산
+set(key, value=None): key값이 H에 있으면 value를 update, 없으면 insert
+remove(key): key값이 H에 있으면 slot 비우기
+search(key): key값이 H에 있으면 key, value return, 없으면 None
+findSlot(key): key값이 있으면 return index , 없으면 return key값이 삽입될 index
+- 충돌 비율: collision 횟수/전체 자료 개수
+
+# tree
+- 특징 
+부모, 자식 관계를 통해 자료 저장
+node: 자료, parent, child, sibling, root, leaf
+link/edge: 연결선 
+level/depth/height: 0부터 다음 세대 1 증가, log(n+1)<=h<=n-1
+path: node 사이의 경로, lengh=edge 수
+- binary tree
+최대 자식 수 2개, 간단하며 많이 사용됨
+순회(traversal): 
+이진트리의 모든 key값을 출력하는 방법, M(현재 방문할 node), L(left subtree), R(right subtree)
+preorder: MLR
+inorder: LMR
+postorder: LRM
+- BST(binary search tree)
+각 node의 왼쪽 subtree key는 node의 key 미만, 오른쪽 subtree key는 node의 key 초과
+연산:
+insert: O(h)
+search: O(h), None 도달 시 없음
+delete: O(h), Merging: L이 대체하고 R은 L의 가장 큰 node의 right, Copying: m을 copy, 원 m을 deleteByMerging
+- balanced BST
+rotation: O(1), height를 O(logn)으로 유지, right: height R +1, L -1, left: height L +1, R -1
+- AVL tree
+모든 node의 L과 R의 height차이가 1이하인 balanced BST
+연산: search, insert, delete: O(logn), 회전수: -, 2, O(logn)
+- Red-Black tree
+각 node에서 leaf node로 가는 모든 경로에 있는 black node의 수는 항상 같음
+가장 유명하고 많이 사용되는 balanced BST, 내부 node: leaf(None) node 제외한 node
+root, red node의 child node, leaf(None) node는 black 
+연산: search, insert, delete: O(logn), 회전수: -, 2, 3
+- (2,3,4)-tree
+node의 key 수: 1~3, child node 수: 2~4, 모든 leaf node가 같은 level에 존재하는 balanced ST
+log4 n<=height<=log2 n->h=O(logn)
+연산:
+insert: O(logn), 4-node를 split하면서(가운데 key를 parent로, 쪼개진 node 2개 연결) leaf node까지 내려감 
+delete: O(logn), x가 leaf node에 없을 경우 x 보다 큰 다음 수를 찾아 위치 교체
+->2-node를 3-node로 바꾸면서(sibling 3,4-node의 key 중 하나를 parent, parent를 key로, else: sibling 2-node, parent 합쳐서
+ 4-node 생성, root가 2-node인 경우 일단 내려감->새로운 root 생성, h-1) leaf node까지
+(2,3,4)-tree->Red-Black tree:
+2-node->black node, 3-node->2 level로 쪼갬 위: black, 아래: red, 4-node: 중간값을 위로 2 level로 쪼갬 위: black, 아래: red
+- splay tree
+- heap
+순서대로 꽉차있는 binary tree, heap property: 자식 node의 값은 부모 node의 값 이하, max-heap, min-heap
+연산: 
+insert: heapify_up 이용, O(logn)
+heapify_down: O(height) = O(logn)
+heapify_up: O(height) = O(log n)
+make-heap: O(nlogn) 실제로는 O(n)
+finde-max: O(1)
+delete-max: O(logn)
+search: 존재 x
+sort: make_heap-> delete_max(pop 제외): O(nlogn)
+- 표현법
+1. list를 통해 각 level이 꽉 차있다고 가정 후 표현, e.g.: H=[a, b, c, None, d, e, f], heap
+장점: H[k]의 left, right, parent = H[2*k+1], H[2*k+2], H[(k-1)//2]: search O(1)
+단점: 빈 node 자리 때문에 메모리 낭비 가능
+2. list를 통해 [a, [a의 왼쪽 부tree], [a의 오른쪽 부tree]]로 재귀적으로 표현, e.g.: [a, [b, [], [d,[],[]], [c, [e,[],[]], [f, [], []]]
+3. 적절한 node class로 표현, e.g.: key, left, right, parent
+
+# union-find(disjoint set)
+set 연산을 효율적으로 제공, python에선 set 자료구조 제공
+구현:
+1. circularly doublylinkedlist
+find: O(n), dummy node부터 search, 대표값 dummy node
+union(x, y): O(n), v=find(x), w=find(y), join(v, w)
+2. tree
+root.parent=root, (key, parent link)만 존재
+find: O(logn), root까지 올라가기, 대표값 root
+union(x, y): O(logn), root.parent=another root(big rank)
+연산:
+make_set(x): O(1), {x}
+find(x): O(logn), membership 연산, x가 속한 set의 대표값 return 
+union(x, y): O(logn), x가 속한 set union y가 속한 set
+
+# Graph
+- 특징
+가장 복잡한, 일반적인 자료구조
+G = (V: vertex set, E: edge set), degree: edge 수, adjacent: vertex 사이 인접, incident: edge에서 vertex 인접
+path: vertex 중복 x, cycle: closed path, tree는 cycle 없음, cycle이 없음 -> 두 vertex를 잇는 path가 유일
+undirected G: edge 방향 x, directed G: edge 방향 o, weight: cost, n: vertex 수, m: edge 수, sparce G: n>>m
+dense G: n<<m
+- 표현법
+1. adjacency matrix
+n x n matrix 생성 -> vertex 사이 edge 유무를 0, 1로 표현
+memory: O(n^2), 낭비
+search (u, v) (- E: G[u][v]==1, O(1),
+u에 인접한 모든 v에 대해: for v in range(1, n+1): do with G[u][v], O(n)
+insert new edge(u,v): G[u][v] = 1, O(1)
+delete edge(u,v): G[u][v] = 0, O(1)
+2. adjacency (linked)list
+vertex에 연결된 edge 묶음을 linkedlist로 표현
+memory: O(n+m)
+search (u, v) (- E: G[u].search(v), O(n)
+u에 인접한 모든 v에 대해: for each edge in G[u]: do something, O(n)
+insert new edge(u,v): G[u].pushFront(v), O(1)
+delete edge(u,v): x = G[u].search(v)-> G[u].remove(x), O(n)
+- G traversal
+DEF, BFS
+- DAG(Directed Acyclic Graph)
+topological sorting: 선후관계에 따라 결정된 일의 순서, DFS에서 post 큰 순서대로 나열하면 한 종류 생성 
+
+# Binary Indexed Tree(Fenwick tree)
+index는 1부터, 이진수로 표현 후 1비트 기준으로 나눠서 활용(ex. 10=1010=1000+0010), 1차원 배열
+질의(query, prefix_sum(k): O(1))에 대한 전처리과정(preprocessing, P[k]= A[1]+ ... +A[k]= P[k-1]+A[k]: O(n)) 필요
+- 구현
+구간 질의: O(log n)
+LSB(k)= 첫 번째 1이 등장하는 위치 d, 2^d= k & -k+1, O(1)
+T[k]= A[k]+ ...+ A[k-LSB(k)+1]: O(1), 구성: O(n)
+prefix_sum(k): s=0, while k>=1: s+=T[k], k-=LSB(k) return s, O(log n)
+update(k, x): d= x-A[k], while k<=n: T[k]= T[k]+d, k= k+LSB(k), O(log n)
